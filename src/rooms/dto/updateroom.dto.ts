@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { IsBoolean, isEmpty, IsEmpty, IsMongoId, IsNotEmpty, IsNotIn, IsNumber, IsOptional, IsString, IS_EMPTY } from "class-validator";
-import { ObjectId } from "mongoose";
+import { IsEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+
 export class RoomsUpdateDto{
     @IsOptional()
     @IsString()
