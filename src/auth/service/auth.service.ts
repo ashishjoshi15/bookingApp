@@ -7,18 +7,18 @@ import { DatabaseConnection } from "src/database/database.services";
 import { UserDocument, UserEntity } from "src/users/schema/user.schema";
 import * as bcrypt from 'bcrypt';
 import { JwtService } from "@nestjs/jwt";
-//import {firebase} from "firebase" ;
+import {nodemailer} from 'nodemailer'
 
 @Injectable()
 export class AuthService {
     constructor(
      @InjectModel(UserEntity.name)private readonly userModel:Model<UserDocument>,
      @DatabaseConnection() private readonly db: Connection,
-     private readonly jwtService : JwtService
+     private readonly jwtService : JwtService,
+     
     ){}
    async sendOtp(phone:string,token:string){
     const otp = this.random(4).toString();
-     
        await this.db.collection('user_otp').updateOne(
             {
                 phone: phone.toLowerCase(),
@@ -31,6 +31,7 @@ export class AuthService {
                 upsert: true,
             }
         );
+       
       
         return true     
    }

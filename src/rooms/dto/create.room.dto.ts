@@ -15,13 +15,14 @@ export class RoomsCreateDto{
     maxPeople:number
 
     @IsNotEmpty()
-    rooms:[string]
-
-    @IsNotEmpty()
-    @IsNumber()
+    @IsString()
     desc:number
     
     @IsNotEmpty()
-    @IsMongoId()
-    hotel_id:ObjectId
+    @IsString()
+    hotel_id:string
+
+    @IsNotEmpty()
+    @IsString()
+    room_id:string
 }

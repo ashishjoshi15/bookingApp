@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { time } from "console";
 import { ObjectId } from "mongoose";
 
 @Schema()
@@ -29,7 +31,20 @@ export class RoomsEntity{
         required:true,
         unique:false
     })
-    hotel_id:ObjectId
+    hotel_id:string;
+    
+    @Prop({
+        required:true,   
+    })
+    roomNumbers: [
+        { number: Number,
+         unavailableDates: {type: [Date]}}
+    ];
+    @Prop({ 
+    })
+    timestamps:true
+    
+    
 }
 
 export const RoomsSchema=SchemaFactory.createForClass(RoomsEntity)

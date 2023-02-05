@@ -6,6 +6,7 @@ import { serialize } from "v8";
 import { HotelsDTO } from "../dto/hotel.create.dto";
 import { HotelsService } from "../service/hotel.service";
 
+
 @Controller('/hotel')
 export class HotelController{
     constructor(

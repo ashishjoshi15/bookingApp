@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 //import { AuthController } from './auth/controller/auth.common.controller';
 
 import { HotelsModule } from './hotels/hotel.module';
+import { RoomsModule } from './rooms/rooms.module';
 import { UserService } from './users/service/user.service';
 import { UserModule } from './users/user.module';
 
@@ -18,7 +19,7 @@ import { UserModule } from './users/user.module';
     isGlobal: true,
      })
   ,MongooseModule.forRoot(process.env.DB_CONNETION),
- HotelsModule,UserModule,AuthModule,JwtModule.register({
+ HotelsModule,UserModule,AuthModule,RoomsModule,JwtModule.register({
   secret:"secret",
   signOptions:{expiresIn:'1d'}
  })], 

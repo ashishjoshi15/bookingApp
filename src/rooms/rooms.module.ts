@@ -5,13 +5,15 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Mongoose } from "mongoose";
 import { verifyAdminToken } from "src/utils/verfyTokenAdmin.middlware";
 import { verifyUserToken } from "src/utils/verifyToken.midleware";
+import { RoomsController } from "./controller/rooms.controller";
 import { RoomsEntity, RoomsSchema } from "./schema/rooms.schema";
+import { RoomsService } from "./service/rooms.service";
 
 
 
 @Module({
-    controllers: [],
-    providers: [,JwtService],
+    controllers: [RoomsController],
+    providers: [RoomsService,JwtService],
     imports: [
         MongooseModule.forFeature(
             [
@@ -25,17 +27,4 @@ import { RoomsEntity, RoomsSchema } from "./schema/rooms.schema";
         ),
     ],
 })
-export class RoomsModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-      consumer
-        .apply(verifyAdminToken)
-        .exclude(
-            { path: 'hotel/getAll', method: RequestMethod.GET }
-        )
-        .forRoutes();
-
-        consumer
-        .apply(verifyUserToken)
-        .forRoutes({ path: 'hotel/getAll', method: RequestMethod.GET })
-    }
-  }
+export class RoomsModule {}
