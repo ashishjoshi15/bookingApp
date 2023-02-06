@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Delete, Request, Get, NotAcceptableException, NotFoundException, Param, Patch, Post, Query, UseGuards, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Request, Get, NotAcceptableException, NotFoundException, Param, Patch, Post, Query, UseGuards, Res, UnauthorizedException } from "@nestjs/common";
 import { PaginationParams } from "src/paginationParams.dto";
 import { UserService } from "src/users/service/user.service";
 import * as bcrypt from 'bcrypt';
@@ -11,16 +11,14 @@ import { LoginWithPassword } from "../dto/login.dto";
 import { LoginWithOtp } from "../dto/loginWithotp.dto";
 import { AuthService } from "../service/auth.service";
 import { ForgetPasswordDto } from "../dto/forgetpassword.dto";
-import { query } from "express";
-//import jwt from "jsonwebtoken";
-import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
+
+
 import { JwtService } from "@nestjs/jwt";
-import { AuthGuard } from "@nestjs/passport";
-import { LocalAuthGuard } from "../auth.guard";
+import { VerifyOtpDto } from "../dto/verify_otp.dto";
 
 export let jwtService: JwtService
 
-@Controller('/user')
+@Controller('/auth')
 export class AuthController {
     constructor(
         private readonly userService: UserService,
@@ -53,7 +51,7 @@ export class AuthController {
         if (!user) {
             throw new NotFoundException()
         }
-
+         
         const token = this.jwtService.sign({ _id: user._id, email: user.email.toString }, {
             secret: process.env.JWT,
             expiresIn: "2d",
@@ -63,8 +61,7 @@ export class AuthController {
         return { message: "Logged in successfully", user, token: token };
 
     }
-
-
+    
     @Post('get_otp')
     async getOtp(
         @Body() body: LoginWithOtp,
@@ -81,6 +78,17 @@ export class AuthController {
             return 'something want wrong'
         }
         return 'otp send'
+    }
+
+    @Post('/verifyOtp')
+    async VerifyOtp(@Body() body:VerifyOtpDto){
+        const validOtp = await this.authService.verifyOtp(body)
+        if(validOtp !==  true){
+            throw new UnauthorizedException({
+                message : "worng Otp"
+            })
+        }
+        return {message:"otp verifyed",validOtp}
     }
 
     @Post('forget-password')

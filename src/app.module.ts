@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -17,6 +18,15 @@ import { UserModule } from './users/user.module';
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
+     }),
+     MailerModule.forRoot({
+      transport:{
+        host:'smtp.sendgrid.net',
+        auth:{
+          user:"apikey",
+          pass:"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"
+        }
+      }
      })
   ,MongooseModule.forRoot(process.env.DB_CONNETION),
  HotelsModule,UserModule,AuthModule,RoomsModule,JwtModule.register({

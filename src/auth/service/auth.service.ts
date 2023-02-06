@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable prettier/prettier */
-import { Body, Injectable, NotAcceptableException, NotFoundException } from "@nestjs/common";
+import { Injectable, NotAcceptableException, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Connection, Model } from "mongoose";
 import { DatabaseConnection } from "src/database/database.services";
 import { UserDocument, UserEntity } from "src/users/schema/user.schema";
 import * as bcrypt from 'bcrypt';
 import { JwtService } from "@nestjs/jwt";
-import {nodemailer} from 'nodemailer'
+import { MailerService } from "@nestjs-modules/mailer";
+import { text } from "stream/consumers";
+
 
 @Injectable()
 export class AuthService {
@@ -15,6 +17,7 @@ export class AuthService {
      @InjectModel(UserEntity.name)private readonly userModel:Model<UserDocument>,
      @DatabaseConnection() private readonly db: Connection,
      private readonly jwtService : JwtService,
+     private readonly mailService : MailerService
      
     ){}
    async sendOtp(phone:string,token:string){
@@ -31,8 +34,16 @@ export class AuthService {
                 upsert: true,
             }
         );
-       
-      
+      const IsEmailinPhone = phone.search("@")
+      if(IsEmailinPhone !== -1){
+        console.log("sendmail-------------->>>>",phone)
+        await this.mailService.sendMail({
+            to:phone.toString(),
+            from:"joshi123paliwalashish@gmail.com",
+            subject:"otp verify",
+            text:`your otp is ${otp}` 
+        })
+      }
         return true     
    }
    async verifyOtp(body){
