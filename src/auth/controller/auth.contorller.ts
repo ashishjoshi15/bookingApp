@@ -51,7 +51,7 @@ export class AuthController {
         if (!user) {
             throw new NotFoundException()
         }
-         
+
         const token = this.jwtService.sign({ _id: user._id, email: user.email.toString }, {
             secret: process.env.JWT,
             expiresIn: "2d",
@@ -61,13 +61,13 @@ export class AuthController {
         return { message: "Logged in successfully", user, token: token };
 
     }
-    
+
     @Post('get_otp')
     async getOtp(
         @Body() body: LoginWithOtp,
         @Query() query) {
         const user = await this.userModel.findOne({ phone: body.phone })
-        
+
         if (user && query.key === "forgetPassword") {
             throw new NotFoundException({
                 message: "user not found"
@@ -81,14 +81,29 @@ export class AuthController {
     }
 
     @Post('/verifyOtp')
-    async VerifyOtp(@Body() body:VerifyOtpDto){
+    async VerifyOtp(@Body() body: VerifyOtpDto) {
         const validOtp = await this.authService.verifyOtp(body)
-        if(validOtp !==  true){
+        if (validOtp !== true) {
             throw new UnauthorizedException({
-                message : "worng Otp"
+                message: "worng Otp"
             })
         }
-        return {message:"otp verifyed",validOtp}
+        const user = await this.userModel.findOne({
+            $or: [
+            { email: body.phone },
+            { phone: body.phone }
+            ]
+        })
+        if (user) {
+            const token = this.jwtService.sign({ _id: user._id, email: user.email.toString }, {
+                secret: process.env.JWT,
+                expiresIn: "2d",
+                notBefore: "0" || 0,
+            });
+
+            return { message: "Logged in successfully", user, token: token };
+            return
+        }
     }
 
     @Post('forget-password')
